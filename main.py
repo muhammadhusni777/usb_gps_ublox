@@ -2,6 +2,9 @@ import serial
 import pynmea2
 import sys
 
+cog = 0
+sog = 0
+
 # Konfigurasi serial port
 def serial_ports():
     
@@ -44,7 +47,25 @@ try:
 
             elif isinstance(msg, pynmea2.RMC):
                 print(f'RMC: Latitude: {msg.latitude}, Longitude: {msg.longitude}, Speed: {msg.spd_over_grnd}, COG : {msg.true_course}')
-
+                if (msg.spd_over_grnd) is None:
+                    sog = 0
+                else:
+                    sog = float(msg.spd_over_grnd)
+                
+                
+                with open('sog.txt', 'w') as file:
+                    # Menulis data ke file
+                    file.write(str(sog))
+                if (msg.true_course) is None:
+                    cog = 0
+                else:
+                    cog = float(msg.true_course)
+                with open('cog.txt', 'w') as file:
+                    # Menulis data ke file
+                    file.write(str(cog))
+                
+                
+                
             elif isinstance(msg, pynmea2.GLL):
                 print(f'GLL: Latitude: {msg.latitude}, Longitude: {msg.longitude}')
                 with open('longitude.txt', 'w') as file:
